@@ -17,7 +17,7 @@ import {
 import { AiFillMail } from 'react-icons/ai'
 import * as Yup from 'yup'
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage, db } from '../../utils/Firebase'
+import { storage, db } from '../../src/utils/Firebase'
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
 
 
@@ -114,7 +114,6 @@ const NewEvent = () => {
 
             })
             );
-
             // success toast
             toast({
                 title: "Event Added!👍",
@@ -124,7 +123,6 @@ const NewEvent = () => {
                 duration: 3000
 
             })
-
             // clear the form
             resetForm()
         }
@@ -136,12 +134,10 @@ const NewEvent = () => {
                 isClosable: "true",
                 duration: 5000
             })
-
             // clear the form
             resetForm()
         }
     }
-
 
     const schema = Yup.object().shape({
         eventTitle: Yup.string().min(10, "Too Short").required('Required'),
@@ -166,7 +162,6 @@ const NewEvent = () => {
 
     // submit form
     const onSubmit = (values) => {
-        console.log(values);
         UploadImageToFirebase(eventCover)
     }
 

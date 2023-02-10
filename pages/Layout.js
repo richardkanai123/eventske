@@ -1,6 +1,6 @@
 import { Box, Divider, VStack } from '@chakra-ui/react'
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from '../src/components/Navbar'
 
 const Layout = ({ children }) => {
     return (
