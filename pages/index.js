@@ -1,3 +1,4 @@
+
 import { Box, Center, Flex, Heading } from '@chakra-ui/react'
 import { collection, getDocs, orderBy } from 'firebase/firestore'
 import Head from 'next/head'
@@ -10,7 +11,7 @@ export const getStaticProps = async () => {
   // fetch events from firebase and return them as props
   const eventsCollection = collection(db, 'Events');
   // ordered by eventDateTimeStamp in ascending order
-  const entries = await getDocs(eventsCollection, orderBy("eventDateTimeStamp", "asc"))
+  const entries = await getDocs(eventsCollection, orderBy("eventDateTimeStamp", "desc"))
   const entriesData = entries.docs.map((entry) => ({
     id: entry.id,
     ...entry.data()
@@ -57,6 +58,8 @@ export default function Home({ data }) {
               }
             </Flex>
           </Center>
+
+
         </Flex>
       </Center>
     </>

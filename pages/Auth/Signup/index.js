@@ -52,7 +52,6 @@ const Login = () => {
             return false;
         }
         if (values.password === values.c_password) {
-            setSubmitError(false)
             createUserWithEmailAndPassword(Auth, values.email, values.password)
                 .then((userCredential) => {
                     // Signed in 
@@ -121,6 +120,7 @@ const Login = () => {
                         name='email'
                         isInvalid={errors.email && touched.email}
                     />
+                    {errors.email && touched.email && <Text color="red.500" fontSize="sm">{errors.email}</Text>}
 
                     <Input
                         w="300px"
@@ -131,15 +131,19 @@ const Login = () => {
                         name='password'
                         isInvalid={errors.password && touched.password}
                     />
+
+                    {errors.password && touched.password && <Text color="red.500" fontSize="sm">{errors.password}</Text>}
                     <Input w="300px"
                         onChange={handleChange}
                         onBlur={handleBlur}
                         type="password"
                         placeholder="confirm password" name="c_password"
                         isInvalid={errors.c_password && touched.c_password} />
+
+                    {errors.c_password && touched.c_password && <Text color="red.500" fontSize="sm">{errors.c_password}</Text>}
                     <Button
                         onClick={handleSignUpWithEmailandPassword}
-                        isLoading={submitError}
+                        // isLoading={submitError}
                         bg="blue.600"
                         w="200px"
                         fontWeight="bold"

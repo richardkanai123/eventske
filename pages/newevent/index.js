@@ -19,12 +19,13 @@ import * as Yup from 'yup'
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage, db } from '../../src/utils/Firebase'
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
-
+import { Auth } from '../../src/utils/Firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 const NewEvent = () => {
     const [entrance, SetEntrance] = useState(false)
     const [eventCover, setEventCover] = useState({})
-
+    const [user] = useAuthState(Auth)
 
 
     // toast for success and error
@@ -110,7 +111,8 @@ const NewEvent = () => {
                 eventOrganizerEmail: values.eventOrganizerEmail,
                 eventBookingSite: values.eventBookingSite,
                 eventDateCreated: Timestamp.now(),
-                eventDateTimeStamp: Timestamp.fromDate(new Date(values.eventDate))
+                eventDateTimeStamp: Timestamp.fromDate(new Date(values.eventDate)),
+                uploader: user.uid
 
             })
             );
