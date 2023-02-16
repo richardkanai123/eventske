@@ -98,7 +98,7 @@ const Profile = () => {
                 <CardBody>
                     <Heading as={'h1'} size={'2xl'}>You are not logged in</Heading>
                     {/* redirect to log in page */}
-                    <Button onClick={
+                    <Button size="lg" mt="3" colorScheme="messenger" onClick={
                         () => router.push('/Auth/Login')
                     }>Log in</Button>
                 </CardBody>
