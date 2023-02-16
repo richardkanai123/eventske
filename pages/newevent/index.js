@@ -34,7 +34,7 @@ const NewEvent = () => {
     const UploadImageToFirebase = async (file) => {
 
         // root ref
-        const storageRef = ref(storage, `EventCovers/${values.eventTitle}+ CoverPhoto`);
+        const storageRef = ref(storage, `EventCovers/${values.eventTitle} CoverPhoto`);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         // Register three observers:
@@ -53,7 +53,7 @@ const NewEvent = () => {
                     description: "Please wait for the upload to complete",
                     status: "loading",
                     isClosable: "false",
-                    duration: 5000,
+                    duration: 2000,
                     position: "top",
                     variant: "solid"
                 })
@@ -100,7 +100,8 @@ const NewEvent = () => {
                 eventBanner: url,
                 eventTitle: values.eventTitle,
                 eventDescription: values.eventDescription,
-                eventCity: values.eventVenue,
+                eventCity: values.eventCity,
+                eventVenue: values.eventVenue,
                 eventDate: values.eventDate,
                 eventTime: values.eventTime,
                 eventFee: values.eventFee,

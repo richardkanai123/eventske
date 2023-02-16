@@ -1,6 +1,6 @@
 
 import { Box, Center, Flex, Heading } from '@chakra-ui/react'
-import { collection, getDocs, orderBy } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import Head from 'next/head'
 import Banner from '../src/components/Banner'
 import Event from '../src/components/Event'
@@ -11,7 +11,7 @@ export const getStaticProps = async () => {
   // fetch events from firebase and return them as props
   const eventsCollection = collection(db, 'Events');
   // ordered by eventDateTimeStamp in ascending order
-  const entries = await getDocs(eventsCollection, orderBy("eventDateTimeStamp", "desc"))
+  const entries = await getDocs(eventsCollection)
   const entriesData = entries.docs.map((entry) => ({
     id: entry.id,
     ...entry.data()
@@ -24,7 +24,6 @@ export const getStaticProps = async () => {
 
 
 export default function Home({ data }) {
-
   return (
     <>
       <Head>
@@ -33,9 +32,14 @@ export default function Home({ data }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      {/* body */}
       <Center as="div" w="100%">
         <Flex w="100%" direction="column" alignItems="center" justify="center" align="center" alignContent="center">
-          <Banner />
+          {/* banner */}
+          {/* Bannner need to be worked on */}
+          {/* <Banner /> */}
+          {/* upcoming events heading */}
           <Heading as="h3" my="10">Upcoming Events</Heading>
           {/* upcoming events wrapper */}
           <Center w="100%">
@@ -48,10 +52,11 @@ export default function Home({ data }) {
                     eventID={event.id}
                     Title={event.eventTitle}
                     EntranceFee={event.eventFee === 0 ? "free" : event.eventFee}
-                    Venue={event.eventCity}
+                    Venue={event.eventVenue}
                     eventDate={event.eventDate}
                     ImageUrl={event.eventBanner}
                     eventTime={event.eventTime}
+                    Likers={event.Likers ? event.Likers : []}
 
                   />
                 ))

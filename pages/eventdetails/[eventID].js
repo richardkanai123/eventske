@@ -59,6 +59,9 @@ const EventDetails = ({ EventData }) => {
                 <Heading display="flex" gap="10px" alignSelf="start" as="h4" size="lg" mt="4" textAlign="center" px="3">
                     <GoLocation /> {EventData.eventCity}
                 </Heading>
+                <Heading display="flex" alignSelf="start" as="h4" size="md" mt="2" textAlign="center" px="3">
+                    {EventData.eventVenue}
+                </Heading>
 
                 <DaysCounter setDate={EventData.eventDate} setTime={EventData.eventTime} />
 

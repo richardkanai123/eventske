@@ -24,12 +24,15 @@ import { doc, deleteDoc } from "firebase/firestore";
 // import { Event } from '../../src/components/Event'
 import NextLink from 'next/link'
 import { Link } from '@chakra-ui/react'
+import { AiFillLike } from 'react-icons/ai'
 
 const Profile = () => {
 
     const [user, loading] = useAuthState(Auth)
     const router = useRouter()
     const [userEvents, setUserEvents] = useState([])
+    const [userLikedEvents, setUserLikedEvents] = useState([])
+
 
     // toast
     const toast = useToast()
@@ -47,11 +50,21 @@ const Profile = () => {
     const FetchEvents = async () => {
         //    wait for user to load then query firestore for events with the current user's uid
         if (user) {
-            const EventsRef = query(collection(db, "Events"), where("uploader", "==", user.uid))
+            const EventsRef = collection(db, "Events")
 
             await getDocs(EventsRef)
                 .then((data) => {
-                    setUserEvents(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
+                    // filter events to get only those created by the current user
+                    const filteredEvents = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((event) => event.uploader === user.uid)
+
+                    // set state to filtered events
+                    setUserEvents(filteredEvents)
+
+                    // filter all events to get only those the current user is attending or interested in if found in event Likers array
+                    const LikedEvents = data.docs.map((doc) => ({ ...doc.data(), id: doc.id })).filter((event) => event.Likers.includes(user.uid))
+                    // set state to filtered events
+                    setUserLikedEvents(LikedEvents)
                 })
                 .catch((error) => {
                     toast({
@@ -66,7 +79,6 @@ const Profile = () => {
 
         }
 
-        console.log(userEvents);
     }
 
 
@@ -99,14 +111,16 @@ const Profile = () => {
         return (
             <Center display="flex" flexDirection="column">
                 <Flex
-                    gap="20px"
+                    gap="10px"
                     flexWrap={{ base: "wrap", md: "nowrap" }}
                     justify="center"
-                    align="center">
+                    align="center"
+                >
                     {/* user info */}
                     <Card
                         p="2"
                         w="320px"
+                        h="fit"
                     >
                         <Heading as={'h1'} size={'lg'}>Profile</Heading>
                         <CardBody textAlign="center">
@@ -136,7 +150,7 @@ const Profile = () => {
                     <Card
                         p="2"
                         w="320px"
-
+                        h="fit"
                     >
                         <CardBody>
                             <Heading as="h2" size="lg" mb="3">
@@ -148,7 +162,7 @@ const Profile = () => {
                             </Stack>
                             <Stack direction="column" spacing={2} align="center">
                                 <Text fontSize="md" fontWeight="bold"> Upcoming Events</Text>
-                                <Text fontSize="xl" fontWeight="bold">{userEvents.length}</Text>
+                                <Text fontSize="xl" fontWeight="bold">{userLikedEvents.length}</Text>
                             </Stack>
                         </CardBody>
                     </Card>
@@ -158,8 +172,8 @@ const Profile = () => {
                 {/* List User Uploaded Events */}
                 <Flex w="100%" display="flex" flexWrap="wrap" justify="center" align="center" gap="2">
                     {userEvents.map((event) => (
-                        <Card key={event.id} p="2" w="320px" h="350px" maxHeight="400px">
-                            <CardBody spacing="3">
+                        <Card key={event.id} p="2" w="320px" minHeight="360px" maxHeight="400px">
+                            <CardBody spacing="2">
                                 <Image
                                     w="100%"
                                     h="150px"
@@ -167,12 +181,16 @@ const Profile = () => {
                                     src={event.eventBanner}
                                     alt="Event Banner"
                                 />
-                                <Heading as="h3" size="lg" mb="2">
+                                <Heading as="h3" size="lg" mb="1">
                                     {event.eventTitle}
                                 </Heading>
                                 <HStack w="100%" spacing="2" align="center" justify="center">
                                     <Text fontSize="base" fontWeight="bold">{event.eventDate}</Text>
                                     <Text fontSize="base" fontWeight="bold">{event.eventTime}</Text>
+                                </HStack>
+                                <HStack w="100%" spacing="2" align="center" justify="center">
+                                    <AiFillLike />
+                                    <Text fontSize="sm">{event.Likers.length}</Text>
                                 </HStack>
                                 <HStack display="flex"
                                     w="100%"
@@ -225,6 +243,54 @@ const Profile = () => {
                             </CardBody>
                         </Card>
                     ))}
+                </Flex>
+
+                {/* lists user liked events */}
+                <Heading as={'h1'} size={'lg'} mb="3" mt="3">Liked Events</Heading>
+                <Flex w="100%" display="flex" flexWrap="wrap" justify="center" align="center" gap="2">
+                    {userLikedEvents.map((event) => (
+                        <Card key={event.id} p="2" w="320px" minHeight="360px" maxHeight="400px">
+                            <CardBody spacing="3">
+                                <Image
+                                    w="100%"
+                                    h="150px"
+                                    objectFit="cover"
+                                    src={event.eventBanner}
+                                    alt="Event Banner"
+                                />
+                                <Heading as="h3" size="lg" mb="2">
+                                    {event.eventTitle}
+                                </Heading>
+                                <HStack w="100%" spacing="2" align="center" justify="center">
+                                    <Text fontSize="base" fontWeight="bold">{event.eventDate}</Text>
+                                    <Text fontSize="base" fontWeight="bold">{event.eventTime}</Text>
+                                </HStack>
+                                {/* show number of likes */}
+                                <HStack w="100%" spacing="2" align="center" justify="center">
+                                    <AiFillLike />
+                                    <Text fontSize="sm">{event.Likers.length}</Text>
+                                </HStack>
+                                <HStack display="flex"
+                                    w="100%"
+                                    spacing="2"
+                                    align="center"
+                                    justifyContent="space-around"
+                                    gap="2"
+                                >
+                                    <CardFooter>
+                                        <NextLink href={`/eventdetails/${event.id}`} passHref>
+                                            {/* <Link> */}
+                                            <Button colorScheme="blue" variant="outline" size="sm">
+                                                View Event
+                                            </Button>
+                                            {/* </Link> */}
+                                        </NextLink>
+                                    </CardFooter>
+                                </HStack>
+                            </CardBody>
+                        </Card>
+                    ))}
+
                 </Flex>
             </Center >
         )
